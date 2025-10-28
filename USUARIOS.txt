@@ -1,7 +1,0 @@
-ADMIN
-Antonio.lealel@gmail.com
-phpsqlperl
-
-usuario UVM
-Antonio.lealel@uvmnet.edu
-phpsqlperl
