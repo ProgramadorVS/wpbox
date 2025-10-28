@@ -1,0 +1,389 @@
+{
+    "alias": "wpbox",
+    "version": "1.3",
+    "alwayson":true,
+    "description": "",
+    "beforeMainMenus":true,
+    "nameSpace": "Modules\\Wpbox",
+    "hasDashboardInfo":true,
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Wpbox\\Providers\\Main"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "global_fields":[
+   
+        {
+            "separator":"Google Maps",
+            "title": "Google Maps Key - used in campaign analytics",
+            "key":"GOOGLE_MAPS_API_KEY",
+            "ftype": "input",
+            "value": ""
+        },
+        {
+            "title": "Enable google maps on campaign details",
+            "key":"GOOGLE_MAPS_ENABLED_ON_DETAILS",
+            "ftype": "bool",
+            "value": true
+        },
+        {
+            "separator":"Landing page links",
+            "title": "Privacy Policy link",
+            "key": "PRIVACY_POLICY_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":""
+        },
+        {
+            "title": "Terms of use policy link",
+            "key": "TERMS_OF_SERVICE_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":""
+        },
+        {
+            "title": "Disclaimer policy link",
+            "key": "DISCLAIMER_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":""
+        },
+        {
+            "separator":"Social links",
+            "title": "Facebook",
+            "key": "FACEBOOK_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":"#"
+        },
+        {
+            "title": "Instagram",
+            "key": "INSTAGRAM_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":"#"
+        },
+        {
+            "title": "X link",
+            "key": "X_URL",
+            "ftype": "input",
+            "type": "text",
+            "value":"#"
+        }
+    ],
+    "vendor_fields":[
+       
+
+      {
+        "separator": "Configuración de Envíos de Campañas",
+        "title": "Seleccione la manera de enviar las Campañas: si usas cron debes de ponerlo asi --> */5 * * * * curl -s https://movil.alever.mx/ejecutar-cola <--",
+        "key": "tipo_envio_campaña",
+        "ftype": "select",
+        "value": "normal",
+        "icon": "💬",
+        "data": {
+            "normal": "Normal ( si son muchos mensajes, puede tardar en enviar y bloquear el sistema )",
+            "cron": "Cron ( requiere configurar un cron para que se envíen los mensajes programados )"
+        }
+    },
+
+        {
+            "separator":"Chat settings",
+            "title": "Black listed phone numbers",
+            "key":"black_listed_phone_numbers",
+            "ftype": "input",
+            "value": "",
+            "icon":"💬"
+        },
+
+      
+        {
+            "separator":"Bot settings",
+            "title": "Mensaje cuando se espera un retraso en la respuesta",
+            "key":"delay_response",
+            "ftype": "input",
+            "value": "En breve le daré respuesta.",
+            "icon":"🤖"
+        },
+
+        
+            {
+                "separator":"Avisos Mensaje",
+                "icon":"🔔",
+                "title": "Habilitar Avisos de Mensaje al whats personal, cuando alguien mandé mensaje al Robot?",
+                "key": "aviso_mensaje_sino",
+                "ftype": "bool",
+                "value":true
+            },
+            {
+                "title": "Número Celular a mandar Whats para avisar del mensaje (Solo avisaría cuando no responda ningun Bot) ",
+                "key": "aviso_mensaje_celular",
+                 "ftype": "input",
+                 "value":false
+            },
+            {
+                "title": "Template para mandar . siempre usar -> aviso_mensaje <- ( debe de estar registrado en Facebook )",
+                "key": "aviso_mensaje_template",
+                 "ftype": "input",
+                 "value":false
+            },
+            {
+                "title": "Template IDIOMA ( revisar en menu templates el idioma, puede ser es_MX )",
+                "key": "aviso_mensaje_lenguaje",
+                 "ftype": "input",
+                 "value":false
+            }
+        
+ 
+    ],
+
+
+
+
+    "staffmenus":[
+        {
+            "name":"Chat",
+            "icon":"ni ni-chat-round text-green",
+            "route":"chat.index",
+            "color":"#2dce89"
+        },
+        {
+            "name":"Campaigns",
+            "icon":"ni ni-send text-green",
+            "route":"campaigns.index"
+        }
+    ],
+    "ownermenus":[
+        {
+            "name":"Chat",
+            "icon":"ni ni-chat-round text-green",
+            "route":"chat.index",
+            "color":"#2dce89"
+        },
+        {
+            "id":"CampaignsMenu",
+            "name":"Campaigns",
+            "icon":"ni ni-send text-green",
+            "route":"campaigns.index",
+            "isGroup":true,
+            "menus":[ 
+                {
+                    "name":"Listado Campañas",
+                    "icon":"ni ni-send text-green",
+                    "route":"campaigns.index"
+                },
+                {
+                    "name":"Tipos de campaña",
+                    "icon":"ni ni-bullet-list-67 text-green",
+                    "route":"campaigns.tiposcampa.index"
+                },
+                 {
+                    "name":"Crear Campaña",
+                    "icon": "ni ni-fat-add text-green",
+                    "route":"campaigns.create"
+                                    
+                }
+          
+            ]
+        },
+        {
+            "id":"contactMenu",
+            "name":"Contacts",
+            "icon":"ni ni-badge text-green",
+            "route":"contacts.index",
+            "isGroup":true,
+            "menus":[ 
+                {
+                    "name":"Listado de Contactos",
+                    "icon":"ni ni-badge text-green",
+                    "route":"contacts.index"
+                },
+                {
+                    "name":"Campos",
+                    "icon":"ni ni-bullet-list-67 text-green",
+                    "route":"contacts.fields.index"
+                },
+                {
+                    "name":"Grupos",
+                    "icon":"ni ni-collection text-green",
+                    "route":"contacts.groups.index"
+                },
+                {
+                    "name":"Importar contactos",
+                    "icon":"ni ni-cloud-download-95 text-green",
+                    "route":"contacts.import.index"
+                }
+            ]
+        },
+        {
+            "name": "Plantillas WhatsApp",
+            "icon": "ni ni-chat-round text-green",
+            "route": "templates.index"
+        },{
+            "name":"Respuestas Automáticas",
+            "icon":"ni ni-curved-next text-green",
+            "route":"replies.index"
+        },
+            {
+            "id":"citasMenu",
+            "name":"Citas",
+             "icon": "ni ni-calendar-grid-58 text-green",
+            "route":"appointments.index",
+            "isGroup":true,
+            "menus":[ 
+                {
+                    "name":"Calendario de Citas",
+                    "icon": "ni ni-calendar-grid-58 text-green",
+                    "route":"calendario.index"
+                },
+                {
+                    "name":"Listado de Citas",
+                    "icon":"ni ni-badge text-green",
+                    "route":"appointments.index"
+                } ,
+                {
+                    "name":"Crear Mensaje Cita",
+                    "icon": "ni ni-fat-add text-green",
+                    "route":"campaigns.create",
+                                    "params": {
+                                          "type": "simple"
+                                           }
+                },
+                 
+                
+                {
+                    "name":"Configuración de Mensajes Citas",
+                   "icon": "ni ni-settings text-green",
+                    "route":"campanias.index" 
+                                    
+                }
+                
+               
+                 
+            ]
+           
+            
+        }
+
+    
+    ],
+        "clientmenus":[
+
+
+
+
+                   {
+            "id":"contactMenu",
+            "name":"Contacts",
+            "icon":"ni ni-badge text-green",
+            "route":"contacts.index",
+            "isGroup":true,
+            "menus":[ 
+                {
+                    "name":"Listado de Contactos",
+                    "icon":"ni ni-badge text-green",
+                    "route":"contacts.index"
+                },
+                 
+                {
+                    "name":"Grupos",
+                    "icon":"ni ni-collection text-green",
+                    "route":"contacts.groups.index"
+                }
+                 
+            ]
+           
+            
+        },
+        {
+            "name":"Chat",
+            "icon":"ni ni-chat-round text-green",
+            "route":"chat.index",
+            "color":"#2dce89"
+        },
+        {
+            "id":"CampaignsMenu",
+            "name":"Campaigns",
+            "icon":"ni ni-send text-green",
+            "route":"campaigns.index",
+            "isGroup":true,
+            "menus":[ 
+                {
+                    "name":"Listado Campañas",
+                    "icon":"ni ni-send text-green",
+                    "route":"campaigns.index"
+                },
+                {
+                    "name":"Tipos de campaña",
+                    "icon":"ni ni-bullet-list-67 text-green",
+                    "route":"campaigns.tiposcampa.index"
+                },
+
+
+                 {
+                    "name":"Crear Campaña",
+                    "icon": "ni ni-fat-add text-green",
+                    "route":"campaigns.create"
+                                    
+                }
+
+
+
+            ]
+        },
+ 
+                {
+            "id":"citasMenu",
+            "name":"Citas",
+             "icon": "ni ni-calendar-grid-58 text-green",
+            "route":"appointments.index",
+            "isGroup":true,
+            "menus":[ 
+                 {
+                    "name":"Calendario de Citas",
+                 "icon": "ni ni-calendar-grid-58 text-green",
+                    "route":"calendario.index"
+                },
+                {
+                    "name":"Listado de Citas",
+                    
+                      "icon":"ni ni-collection text-green",
+                    "route":"appointments.index"
+                },
+                {
+                    "name":"Crear Mensaje Cita",
+                    "icon": "ni ni-fat-add text-green",
+                    "route":"campaigns.create",
+                                    "params": {
+                                          "type": "simple"
+                                           }
+                },
+                
+                    {
+                    "name": "Configuración de Mensajes Citas",
+                    "icon": "ni ni-settings text-green",
+                    "route": "campanias.index"
+                }
+                 
+                
+                 
+            ]
+           
+            
+        },
+         {
+            "name": "Plantillas WhatsApp",
+            "icon": "ni ni-chat-round text-green",
+            "route": "templates.index"
+        },{
+            "name":"Respuestas Automáticas",
+            "icon":"ni ni-curved-next text-green",
+            "route":"replies.index"
+        }
+    
+    ]
+}

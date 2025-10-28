@@ -1,0 +1,16 @@
+README.md
+app/Http/Controllers/AppsController.php
+app/Http/Controllers/Auth/SocialController.php
+app/Http/Controllers/CRUD/PostsController.php
+app/Scopes/SetCompanyIdInSession.php
+app/Traits/Fields.php
+config/config.php
+config/services.php
+config/version.php
+package.json
+resources/views/admin/navbars/menus/owner.blade.php
+resources/views/apps/company.blade.php
+resources/views/apps/index.blade.php
+resources/views/auth/social.blade.php
+resources/views/auth/whatsappembeded.blade.php
+routes/web.php

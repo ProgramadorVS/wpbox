@@ -1,0 +1,312 @@
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212292880886
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (ANTONIO LEAL) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212292880886
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => Han mandado un Mensaje que no contestó el Bot (DAE Veracruz) 
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => ahan mandado un Mensaje que no contestó el Bot  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => -> {{ contact.name }} <- ha mandado un Mensaje que no contestó el Bot  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => -> DAE Veracruz <- ha mandado un Mensaje que no contestó el Bot  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => DAE Veracruz  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => DAE Veracruz  ha mandado un Mensaje que no contestó el Bot del celular 5212292880886  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => DAE Veracruz  ha mandado un Mensaje que no contestó el Bot del celular , Nivel: {{phone}  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => {{ name }}  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => DAE Veracruz  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => {{Nivel}}  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => {{ Nivel }}  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => *ANTONIO LEAL*  ha mandado un Mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => *DAE Veracruz*  ha mandado un mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => *ANTONIO LEAL*  ha mandado un mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)
+Array
+(
+    [messaging_product] => whatsapp
+    [recipient_type] => individual
+    [to] => 5212291686944
+    [type] => text
+    [text] => Array
+        (
+            [body] => *ANTONIO LEAL*  ha mandado un mensaje que no contestó el Bot del celular  
+            [preview_url] => 1
+        )
+
+)

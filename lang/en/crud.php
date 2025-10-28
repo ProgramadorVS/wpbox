@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'enter_item_name' => 'Enter :item name',
+    'item_managment' => ':Item Manejador',
+    'add_new_item' => 'Agrega nuevo :item',
+    'new_item' => 'Nuevo :item',
+    'back' => 'Atras',
+    'item_has_been_added' => ':Item ha sido agregado',
+    'edit_item_name' => 'Editar :item :name',
+    'item_has_been_updated' => ':Item se ha actualizado',
+    'items_has_been_updated' => ':Item se han actualizado',
+    'item_has_been_removed' => ':Item se ha borrado',
+    'items_have_been_removed' => ':Item han sido borrados',
+    'item_has_items_associated' => ':Item has items associated. Please remove items associated before deleting  this :item.',
+    'edit' => 'Editar',
+    'delete' => 'Borrar',
+    'actions' => 'Acciones',
+    'no_items' => 'No hay :items...',
+    'clear_filters' => 'Limpiar Filtros',
+    'download_report' => 'Descargar Reporte',
+    'filter' => 'Filtro',
+    'load_items' => 'Carga :item',
+    'error' => 'Error :error',
+];

@@ -1,0 +1,59 @@
+TOKEN:
+
+EAAYSbIm5CfIBO1F0n7iwUeXV21rffBgXNrclEeWS1wr3dGHUkB2aKB5fWkq48Sq6LjQM5oaidNyUgKKBibfHQ58AtpIdJGMJ4FKw2UDIOY7SEVpjj1q0GpGDOH0woyvP3GNNJrawazqTI2e5MVSP58cVDjuexsF1AonfNNwN6rbbcGobj073U8ytO1DH6wZDZD
+
+
+Identificador de la app: 1709107236637170
+
+Identificador de número de teléfono: 744143765444577
+
+Identificador de la cuenta de WhatsApp Business: 4114842105451043
+
+pin : 866-625
+
+template:
+
+utilidad_hola
+
+
+===========================
+anterior
+Phone number ID : 721506761038297
+WhatsApp Business Account ID:1065268944933904
+
+======================
+nuevo 52 1 229 461 8631
+Phone number ID :  744143765444577
+WhatsApp Business Account ID: 4114842105451043
+
+PARA QUE JALE EL WEBHOOK DEL OTRO NUMERO CUANDO TENGA VARIOS ( WhatsApp business account)
+https://graph.facebook.com/v19.0/4114842105451043/subscribed_apps
+SE PONE EN AUTHORIZATION LOS DATOS ( POSTMAN)
+
+SOLO PUEDO TENER UN NUMERO EN EL WEBHOOK
+
+====================
+ALEVER
+
+TOKEN
+
+EAAUWcKwzZBkYBPG94XYZCgtsgKOHbSjZBwPNTPDHQKXdsyd6xqHZCDZABTqeQ2LMuHtBRymvnZC5vi7geVQizpmyldXx0yYbk0Atca1QKHv6zHtZAAVAWI4mGhi4dkN9tFWBq5fqrbnA9RXx6zl0cYCZARQILgHkRWQhKeIvDju67OKfLuwLmwtUHORY5r0RJQZDZD
+
+Phone number ID:673090492564105
+
+WHATS BUSINESS ACCOUNT : 1496095491380076
+TELEFONO 229 125 0852
+
+
+PARA CAMBIAR NOMBRE
+
+https://graph.facebook.com/v19.0/Phone number ID/whatsapp_business_profile
+
+PONER TOKEN Y EN BODY
+
+{
+  "messaging_product": "whatsapp",
+  "new_display_name": "Mi Centro Asma Alergia"
+}
+
+
