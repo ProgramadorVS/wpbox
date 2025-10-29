@@ -205,7 +205,8 @@ class FieldsController extends Controller
     {
         $this->authChecker();
         $item = $this->provider::findOrFail($id);
-        $item->name = $request->name;
+       $item->name = $request->name;
+ 
         $item->type = $request->type;
         $item->mostrarenreporte = $request->mostrarenreporte;
         $item->update();

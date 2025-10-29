@@ -1,0 +1,24 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/vendor/
+/storage
+/tests
+/bootstrap
+/database
+/public
+ 
+# Archivos de seguridad y contraseñas que NO deben subir
+TOKEN.txt
+USUARIOS.txt
+WP SUBIR_datos.csv
+alevermx_wpbot.sql

@@ -92,5 +92,50 @@ setTimeout(() => {
         }); 
 }, 1000);
 </script>
+<script>
+// Make the Name field uppercase as the user types/pastes
+document.addEventListener('DOMContentLoaded', function() {
+    // Try to find by id first, then by name attribute
+    var nameInput = document.getElementById('name') || document.querySelector('input[name="name"]');
+    if (!nameInput) return;
+
+    // Ensure initial value is uppercase (when editing existing record)
+    if (nameInput.value) nameInput.value = nameInput.value.toUpperCase();
+
+    // Preserve cursor position when transforming
+    function toUpperPreserveCaret(el) {
+        try {
+            var start = el.selectionStart;
+            var end = el.selectionEnd;
+            el.value = el.value.toUpperCase();
+            // clamp positions
+            var len = el.value.length;
+            start = Math.min(start, len);
+            end = Math.min(end, len);
+            el.setSelectionRange(start, end);
+        } catch (e) {
+            // if selection not supported, fallback
+            el.value = el.value.toUpperCase();
+        }
+    }
+
+    nameInput.addEventListener('input', function(e) {
+        toUpperPreserveCaret(e.target);
+    });
+
+    // Handle paste (paste event occurs before input value is updated in some browsers)
+    nameInput.addEventListener('paste', function(e) {
+        // Use timeout to run after paste is applied
+        setTimeout(function() {
+            toUpperPreserveCaret(nameInput);
+        }, 0);
+    });
+
+    // Optionally ensure blur also uppercases (safe fallback)
+    nameInput.addEventListener('blur', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+});
+</script>
  
 @endsection

@@ -3,8 +3,17 @@
     @if ($isBot)
         @include('partials.input',['id'=>'name','name'=>'Nombre del Bot','placeholder'=>'Nombre del Bot', 'required'=>true])
     @else
-        @include('partials.input',['id'=>'name','name'=>'Nombre de Campaña','placeholder'=>'Nombre de la Campaña', 'required'=>true])
-    @endif 
+        {{-- @include('partials.input',['id'=>'name','name'=>'Nombre de Campaña','placeholder'=>'Nombre de la Campaña', 'required'=>true]) --}}
+   
+        @include('partials.input',[
+            'id'=>'name',
+            'name'=>'Nombre de Campaña',
+            'placeholder'=>'Nombre de la Campaña', 
+            'required'=>true,
+            'oninput' => 'this.value = this.value.toUpperCase()' // <-- Esto es lo nuevo
+        ])   
+        
+     @endif 
 @endif
 
 @include('partials.select',['id'=>'tipo','name'=>'Tipo de Campaña','data'=>$tipocampaña, 'required'=>true]) 
