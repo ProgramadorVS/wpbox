@@ -65,6 +65,12 @@ class AppointmentList extends Component
 
     public function mount()
     {
+        // If the session expired or user is not authenticated, redirect to login
+        if (!auth()->check()) {
+            // Use redirect so the user lands back on the login page
+            return redirect()->route('login');
+        }
+
         if (!$this->fecha) {
             // Obtener el lunes de la semana actual
             $this->fecha = now()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
@@ -92,6 +98,11 @@ class AppointmentList extends Component
 
     public function render()
     {
+        // Guard: if the user session expired, redirect to login instead of throwing
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         $query = Appointment::with('doctor', 'contact')
             ->when($this->status_id, function ($query, $status_id) {
                 return $query->where('status_id', $status_id);
@@ -125,8 +136,9 @@ class AppointmentList extends Component
         
         $data['doctors'] = Doctor::orderBy('name')->get();
 
-        // Obtener la compañía actual 
-        $company = auth()->user()->company ;
+    // Obtener la compañía actual (defensivo: auth()->user() ya verificado arriba)
+    $user = auth()->user();
+    $company = $user ? $user->company : null;
      
         $data['companyLabels'] = [
             'label_contact_name_full' => $company->getConfig('label_contact_name_full', 'NOMBRE DEL PACIENTE'),

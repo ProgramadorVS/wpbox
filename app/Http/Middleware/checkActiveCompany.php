@@ -6,8 +6,8 @@ use App\Models\Company;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+
 use Symfony\Component\HttpFoundation\Response;
- 
 
 class checkActiveCompany
 {
