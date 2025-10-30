@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Language::class,
+            \App\Http\Middleware\PreventBackHistoryCache::class, // para el cache del usuario PAGE EXPIRED
         ],
 
         'api' => [
@@ -68,7 +69,7 @@ class Kernel extends HttpKernel
         'isAdmin' => \App\Http\Middleware\CheckIfAdmin::class,
         'isCompanyActive' => \App\Http\Middleware\checkActiveCompany::class,
         'isOwnerOnPro' => \App\Http\Middleware\EnsureOwnerIsOnPROPlan::class,
-        'verifiedSetup' => \App\Http\Middleware\EnsureSetupIsDone::class,
+       // 'verifiedSetup' => \App\Http\Middleware\EnsureSetupIsDone::class,
         'impersonate' => \App\Http\Middleware\Impersonate::class,
         'XssSanitizer' => \App\Http\Middleware\XssSanitization::class,
     ];
