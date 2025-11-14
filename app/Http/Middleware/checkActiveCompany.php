@@ -16,6 +16,7 @@ class checkActiveCompany
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         $tmp = explode('/', URL::current());
         $alias = end($tmp);
         $company = Company::where('subdomain', $alias)->first();

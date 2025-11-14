@@ -591,7 +591,7 @@ foreach ($groupIds as $groupId) {
 
 
 // EJECUTAR COLA PARA MANDAR MENSAJES PENDIENTES, SE EJECUTA DESDE EL CRON
-//    */5 * * * * curl -s https://movil.alever.mx/ejecutar-cola
+//    */5 * * * * curl -s https://movil.alever.mx/ejecutar-cola ( cada 5 minutos)
 // ese cron se pone en el server
 public function ejecutarCola()
 {

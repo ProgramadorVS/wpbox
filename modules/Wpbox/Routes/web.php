@@ -1,5 +1,5 @@
 <?php
- 
+ use Modules\Wpbox\Http\Controllers\ChatController;
 use Modules\Wpbox\Http\Controllers\CampaignsTypesController;
 /*
 |--------------------------------------------------------------------------
@@ -13,34 +13,34 @@ use Modules\Wpbox\Http\Controllers\CampaignsTypesController;
 */
 // para cambair el status del enable_bot en la seccion del CHAT
 // E:\wpbox\modules\Contacts\Routes\web.php
-Route::post('/api/contacts/{id}/toggle-enabled-bot', 'Modules\Contacts\Http\Controllers\Main@toggleEnabledBot');
+    Route::post('/api/contacts/{id}/toggle-enabled-bot', 'Modules\Contacts\Http\Controllers\Main@toggleEnabledBot');
 
-Route::post('/api/contacts/{id}/toggle-cambiar-grupo', 'Modules\Contacts\Http\Controllers\Main@toggleCambiarGrupo');
+    Route::post('/api/contacts/{id}/toggle-cambiar-grupo', 'Modules\Contacts\Http\Controllers\Main@toggleCambiarGrupo');
 
-Route::post('/api/contacts/{id}/toggle-cambiar-observacion', 'Modules\Contacts\Http\Controllers\Main@toggleCambiarObservacion');
-
-
+    Route::post('/api/contacts/{id}/toggle-cambiar-observacion', 'Modules\Contacts\Http\Controllers\Main@toggleCambiarObservacion');
 
 
 
-Route::middleware(['web', 'auth', 'impersonate'])
-    ->prefix('logs')
-    ->name('logs.')
-    ->group(function () {
-        Route::get('/', function () {
-            return view('wpbox::logs.index', [
-                'title' => 'Logs de actividad',
-                'subtitle' => 'Registros de actividad por usuario',
-                'custom_table' => true,
-            ]);
-        })->name('index');
-    });
+
+
+        Route::middleware(['web', 'auth', 'impersonate'])
+        ->prefix('logs')
+        ->name('logs.')
+        ->group(function () {
+            Route::get('/', function () {
+                return view('wpbox::logs.index', [
+                    'title' => 'Logs de actividad',
+                    'subtitle' => 'Registros de actividad por usuario',
+                    'custom_table' => true,
+                ]);
+            })->name('index');
+        });
 
 
 
-Route::prefix('wpbox')->group(function() {
-    Route::get('/', 'WpboxController@index');
-});
+        Route::prefix('wpbox')->group(function() {
+            Route::get('/', 'WpboxController@index');
+        });
 
     Route::group([
         'middleware' =>[ 'web','impersonate'],
@@ -69,14 +69,14 @@ Route::prefix('wpbox')->group(function() {
 
 
             //Campaign Types
-          Route::get('tiposcampa', 'CampaignsTypesController@index')->name('campaigns.tiposcampa.index');
+            Route::get('tiposcampa', 'CampaignsTypesController@index')->name('campaigns.tiposcampa.index');
           
-        Route::get('tiposcampa/{tiposcampa}/edit', 'CampaignsTypesController@edit')->name('campaigns.tiposcampa.edit');
-        Route::get('tiposcampa/create', 'CampaignsTypesController@create')->name('campaigns.tiposcampa.create');
-        Route::post('tiposcampa', 'CampaignsTypesController@store')->name('campaigns.tiposcampa.store');
-        
-        Route::put('tiposcampa/{tiposcampa}', 'CampaignsTypesController@update')->name('campaigns.tiposcampa.update');
-        Route::get('tiposcampa/del/{tiposcampa}', 'CampaignsTypesController@destroy')->name('campaigns.tiposcampa.delete');
+            Route::get('tiposcampa/{tiposcampa}/edit', 'CampaignsTypesController@edit')->name('campaigns.tiposcampa.edit');
+            Route::get('tiposcampa/create', 'CampaignsTypesController@create')->name('campaigns.tiposcampa.create');
+            Route::post('tiposcampa', 'CampaignsTypesController@store')->name('campaigns.tiposcampa.store');
+            
+            Route::put('tiposcampa/{tiposcampa}', 'CampaignsTypesController@update')->name('campaigns.tiposcampa.update');
+            Route::get('tiposcampa/del/{tiposcampa}', 'CampaignsTypesController@destroy')->name('campaigns.tiposcampa.delete');
  
                 
 
@@ -152,13 +152,15 @@ Route::prefix('wpbox')->group(function() {
         });
 
         //Webhook
-        Route::prefix('webhook/wpbox')->group(function() {
+            Route::prefix('webhook/wpbox')->group(function() {
             Route::post('receive/{token}', 'ChatController@receiveMessage');
             Route::get('receive/{tokenViaURL}', 'ChatController@verifyWebhook');
             Route::get('sendschuduledmessages', 'CampaignsController@sendSchuduledMessages')
                ->name('wpbox.sendscheduled'); 
             Route::get('sendschuduledmessagesconfirm', 'CampaignsController@sendSchuduledMessagesConfirm');
         });
+
+
 
 
         // EJECUTAR COLA PARA MANDAR MENSAJES PENDIENTES
