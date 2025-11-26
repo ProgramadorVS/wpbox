@@ -12,12 +12,20 @@ class ConfigCampania extends Component
     // Propiedades públicas para Livewire
     public $selectedAgendaCampaign = null;
     public $selectedRecordatorioCampaign = null;
+// de las vacunas
+    public $selectedAgendaVacunaCampaign = null;
+    public $selectedRecordatorioVacunaCampaign = null;
+
     public $selectedCancelacionCampaign = null;
     public $selectedConfirmaCampaign = null;
 
     // Valores originales cargados en mount
     public $originalAgendaCampaign = null;
     public $originalRecordatorioCampaign = null;
+
+    public $originalAgendaVacunaCampaign = null;
+    public $originalRecordatorioVacunaCampaign = null;
+
     public $originalCancelacionCampaign = null;
     public $originalConfirmaCampaign = null;
 
@@ -25,13 +33,21 @@ class ConfigCampania extends Component
     public $previousValues = [];
     public $errorFields = [];
 
+
+    public $selectedCancelacionVacunaCampaign = null;
+    public $originalCancelacionVacunaCampaign = null;
+
     protected function getFieldMapping($field)
     {
         $mappings = [
             'cita_agenda' => ['property' => 'selectedAgendaCampaign', 'type' => 'agenda'],
             'cita_recuerda' => ['property' => 'selectedRecordatorioCampaign', 'type' => 'recordatorio'],
+            'cita_agenda_vacuna' => ['property' => 'selectedAgendaVacunaCampaign', 'type' => 'agenda_vacuna'],
+            'cita_recuerda_vacuna' => ['property' => 'selectedRecordatorioVacunaCampaign', 'type' => 'recordatorio_vacuna'],
             'cita_cancela' => ['property' => 'selectedCancelacionCampaign', 'type' => 'cancelación'],
-            'cita_ok' => ['property' => 'selectedConfirmaCampaign', 'type' => 'confirmación']
+            'cita_ok' => ['property' => 'selectedConfirmaCampaign', 'type' => 'confirmación'],
+
+            'cita_cancela_vacuna' => ['property' => 'selectedCancelacionVacunaCampaign', 'type' => 'cancelación_vacuna'],
         ];
 
         return $mappings[$field] ?? null;
@@ -42,8 +58,15 @@ class ConfigCampania extends Component
     // Cargar las configuraciones actuales y guardar los valores originales
     $this->originalAgendaCampaign = $this->selectedAgendaCampaign = Campaign::where('cita_agenda', 1)->value('id');
     $this->originalRecordatorioCampaign = $this->selectedRecordatorioCampaign = Campaign::where('cita_recuerda', 1)->value('id');
+    
+    $this->originalAgendaVacunaCampaign = $this->selectedAgendaVacunaCampaign = Campaign::where('cita_agenda_vacuna', 1)->value('id');
+    $this->originalRecordatorioVacunaCampaign = $this->selectedRecordatorioVacunaCampaign = Campaign::where('cita_recuerda_vacuna', 1)->value('id');
+    
     $this->originalCancelacionCampaign = $this->selectedCancelacionCampaign = Campaign::where('cita_cancela', 1)->value('id');
     $this->originalConfirmaCampaign = $this->selectedConfirmaCampaign = Campaign::where('cita_ok', 1)->value('id');
+
+  
+        $this->originalCancelacionVacunaCampaign = $this->selectedCancelacionVacunaCampaign = Campaign::where('cita_cancela_vacuna', 1)->value('id');
     }
 
     public function saveAgenda()
@@ -55,6 +78,19 @@ class ConfigCampania extends Component
     {
         $this->saveCampaignConfig('recordatorio', $this->selectedRecordatorioCampaign, 'cita_recuerda');
     }
+
+
+
+    public function saveAgendaVacuna()
+    {
+        $this->saveCampaignConfig('agenda_vacuna', $this->selectedAgendaCampaign, 'cita_agenda_vacuna');
+    }
+
+    public function saveRecordatorioVacuna()
+    {
+        $this->saveCampaignConfig('recordatorio_vacuna', $this->selectedRecordatorioCampaign, 'cita_recuerda_vacuna');
+    }
+
 
     public function saveCancelacion()
     {
@@ -92,12 +128,30 @@ class ConfigCampania extends Component
         if ($this->selectedRecordatorioCampaign !== $this->originalRecordatorioCampaign) {
             $this->saveCampaignConfig('recordatorio', $this->selectedRecordatorioCampaign, 'cita_recuerda');
         }
+
+
+        if ($this->selectedAgendaVacunaCampaign !== $this->originalAgendaVacunaCampaign) {
+            $this->saveCampaignConfig('agenda_vacuna', $this->selectedAgendaVacunaCampaign, 'cita_agenda_vacuna');
+        }
+
+
+        if ($this->selectedRecordatorioVacunaCampaign !== $this->originalRecordatorioVacunaCampaign) {
+            $this->saveCampaignConfig('recordatorio_vacuna', $this->selectedRecordatorioVacunaCampaign, 'cita_recuerda_vacuna');
+        }
+
+
         if ($this->selectedCancelacionCampaign !== $this->originalCancelacionCampaign) {
             $this->saveCampaignConfig('cancelación', $this->selectedCancelacionCampaign, 'cita_cancela');
         }
         if ($this->selectedConfirmaCampaign !== $this->originalConfirmaCampaign) {
             $this->saveCampaignConfig('confirmación', $this->selectedConfirmaCampaign, 'cita_ok');
         }
+
+        if ($this->selectedCancelacionVacunaCampaign !== $this->originalCancelacionVacunaCampaign) {
+            $this->saveCampaignConfig('cancelación_vacuna', $this->selectedCancelacionVacunaCampaign, 'cita_cancela_vacuna');
+        }
+
+
     }
 
 

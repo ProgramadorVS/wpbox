@@ -96,22 +96,15 @@
     }
     /*PARA EL MODAL*/
 
-
-
-
-
-
-
-
         .calendar-container {
             background-color: white;
-            padding: 25px;
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
         #calendar {
-            margin-top: 20px;
+            margin-top: 10px;
         }
         
         .fc-toolbar-title {
@@ -184,7 +177,7 @@
                 .modal-content {
                     background-color: white;
                     margin: 40px auto 0 auto;
-                    padding: 30px;
+                    padding: 20px;
                     border-radius: 12px;
                     width: 90%;
                     max-width: 500px;
@@ -685,6 +678,16 @@
             padding: 6px 12px;
         }
     }
+
+/* Ocultar la hora en las vistas de Rejilla (Mes/Semana/Día) */
+.hide-time .fc-event-time {
+    display: none !important;
+}
+
+/* Ocultar la hora en la vista de Lista (si la usas) */
+.hide-time .fc-list-event-time {
+    display: none !important;
+}
 
     /* Para pantallas muy pequeñas - móviles */
     @media (max-width: 480px) {

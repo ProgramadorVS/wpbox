@@ -90,13 +90,28 @@
                                     <option value="0">NO ASISTIÓ</option>
                                 </select>
                             </div>
+
+                            <!-- Tipo de Cita -->
+                            <div class="col-12 col-md-4">
+                                <label for="tipocita-filter" class="form-label small mb-1">TIPO DE CITA</label>
+                                <select 
+                                    wire:model.live="tipocita" 
+                                    id="tipocita-filter" 
+                                    class="form-select border py-2 w-100"
+                                >
+                                    <option value="">TODOS</option>
+                                    <option value="1">CITA</option>
+                                    <option value="2">ALERGOIDE</option>
+                                    <option value="3">ACUOSA</option>
+                                    <option value="4">ORAL</option>
+                                </select>
+                            </div>
                                 
-                            
 
                         </div>
 
                         <!-- Fila Inferior - Búsqueda por Paciente -->
-                        <div class="row mt-2 align-items-end g-3">     
+                        <div class="row mt-3 align-items-end g-3">     
                             <div class="col-12 col-md-8">
                                 <label for="contact-filter" class="form-label  small mb-1">{{ $companyLabels['label_contact_name_full'] }}</label>
                                 <div class="input-group">
@@ -134,7 +149,7 @@
 
  
  
-
+ {{-- INICIO GRID --}}
               <div  >
                 @if($appointments->isEmpty())
                   <div class="alert alert-secondary text-center" role="alert">
@@ -152,6 +167,9 @@
                           <th class="text-center">Status</th>
                            <th class="text-center">Asistió</th>
                         <th>{{ $companyLabels['label_contact_name_singular'] }}</th>
+
+                        <th>Tipo Cita</th>
+
                         <th>Teléfono</th>
                        
                        
@@ -215,6 +233,9 @@
 
                                  </td>
                               <td>{{ $appointment->contact?->name ?? 'N/A' }}</td>
+
+                            <td>{{ $this->getTipoCitaLabel($appointment->tipocita) }}</td>
+
                              <td>{{ $appointment->contact?->phone ? substr($appointment->contact->phone, 3) : 'N/A' }}</td>
                             
                             
@@ -253,6 +274,9 @@
                 </div>
                 @endif
               </div>
+ {{-- FIN GRID --}}
+
+
             </div>
 
  
@@ -276,4 +300,3 @@
 @endsection
 
 </div>
-

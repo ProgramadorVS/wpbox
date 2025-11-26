@@ -105,13 +105,34 @@ public function getAppointments(Request $request)
         $events = [];
 
         foreach ($appointments as $appointment) {
-            $color = $this->getStatusColor($appointment->status_id,$appointment->contact->expediente);
+            $color = $this->getStatusColor($appointment->status_id,$appointment->contact->expediente,$appointment->tipocita);
 
             $scheduledAt = \Modules\Wpbox\Models\Message::where('cita_id', $appointment->id)
                 ->where('es_cita_confirma', 1)
                 ->value('scchuduled_at');
             if ($scheduledAt === null) {
                 $scheduledAt = '';
+            }
+              $tipocita= $appointment->tipocita;
+
+            $tipocitaText = '';
+
+            switch ($tipocita) {
+                case 1:
+                    $tipocitaText = 'NORMAL';
+                    break;
+                case 2:
+                    $tipocitaText = 'VACUNA ALERGOIDE';
+                    break;
+                case 3:
+                    $tipocitaText = 'VACUNA ACUOSA';
+                    break;
+                case 4:
+                    $tipocitaText = 'ORAL';
+                    break;
+                default:
+                    $tipocitaText = 'DESCONOCIDO'; // Opcional: manejar valores no esperados
+                    break;
             }
 
             $events[] = [
@@ -132,6 +153,8 @@ public function getAppointments(Request $request)
                     'whatscita_ok'=>$appointment->whatscita_ok,
                     'scheduledAt' => $scheduledAt,
                     'doctor_name'=>$doctor_name,
+                    'tipocitaText' => $tipocitaText,
+                    'tipocita' => $tipocita,
                 ]
             ];
         }
@@ -169,20 +192,35 @@ public function getAppointments(Request $request)
  * @param string|null $expediente El número de expediente (opcional).
  * @return string El código de color hexadecimal.
  */
-private function getStatusColor($statusId, $expediente = null)
+private function getStatusColor($statusId, $expediente = null, $tipocita)
 {
-    // Nueva condición: Si es "PRIMERA VEZ" y el status es 1, devuelve amarillo
+    
+
+    // 1. Lógica nueva: Si NO es cita normal (tipos 2, 3, 4)
+    // El color depende exclusivamente del tipo de cita, ignorando el status.
+    if ($tipocita != 1) {
+        switch ($tipocita) {
+            case 2: return '#8166b3ff'; 
+            case 3: return '#fb00cd70'; 
+            case 4: return '#4cbbb6b8';
+            default: return '#fcfc04ff'; // Gris default por seguridad
+        }
+    }
+
+    // 2. Lógica original (Solo se ejecuta si tipocita == 1)
+    
+    // Condición especial: Si es "PRIMERA VEZ" y el status es 1 (Pendiente/Agendada)
     if ($statusId == 1 && $expediente === 'PRIMERA VEZ') {
         return '#f4c93cff'; // Amarillo
     }
-
-    // Lógica original para todos los demás casos
+    // Switch original basado en el estatus de la cita
     switch ($statusId) {
-        case 1: return '#196cf3d9'; // Azul (el color original para status 1)
-        case 2: return '#10B981'; // Verde
-        case 3: return '#EF4444'; // Rojo
-        default: return '#6B7280'; // Gris
+        case 1: return '#196cf3d9'; // Azul
+        case 2: return '#10B981';   // Verde (Atendido)
+        case 3: return '#EF4444';   // Rojo (Cancelado)
+        default: return '#fcfc04ff';  // Gris
     }
+    
 }
 
 

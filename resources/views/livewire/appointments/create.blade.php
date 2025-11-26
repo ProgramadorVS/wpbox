@@ -7,7 +7,33 @@
 
 <div class="row justify-content-center">
     <div class="col-12 col-lg-12">
-        <form wire:submit.prevent="create">
+        {{-- <form wire:submit.prevent="create" x-data="{ selectedCitaText: 'CITA NORMAL' }">
+             --}}
+             <form 
+                wire:submit.prevent="create" 
+                x-data="{ 
+                    selectedCitaText: 'CITA NORMAL', 
+                    tipoCita: @entangle('state.tipocita') ,
+                    showMensaje: false
+                }"
+                  x-init="$watch('tipoCita', value => {
+                    if (value == 1) {
+                        selectedCitaText = 'CITA NORMAL';
+                        showMensaje = false; // Ocultar 
+                    } else if (value == 2) {
+                        selectedCitaText = 'CITA VACUNA ALERGOIDE';
+                        showMensaje = true; // Mostrar 
+                    } else if (value == 3) {
+                        selectedCitaText = 'CITA VACUNA ACUOSA';
+                        showMensaje = true; // Mostrar 
+                    } else if (value == 4) {
+                        selectedCitaText = 'CITA VACUNA ORAL';
+                       showMensaje = true; // Mostrar 
+                    }
+                })"
+                @updateButtonText.window="selectedCitaText = $event.detail.text"
+
+>
             <!-- Campo DOCTOR -->
             <div class="row mb-3 mb-md-4">
                 <div class="col-12">
@@ -45,38 +71,62 @@
                             @enderror
                         </div>
                         
-                        <!-- Hora Inicio -->
-                        <div class="col-12 col-md-4 mb-3 mb-md-0">
-                            <label for="hora" class="form-label small mb-1">HORA INICIO</label>
-                            <input 
-                                type="time" 
-                                
-                                id="hora" 
-                                class="form-control border py-2 w-100" 
-                                wire:model.live="state.hora"
-                            >
-                            @error('state.hora')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- Hora Inicio -->
+                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                <label for="hora" class="form-label small mb-1">HORA INICIO</label>
+                                <input 
+                                    type="time" 
+                                    id="hora" 
+                                    class="form-control border py-2 w-100" 
+                                    wire:model.live="state.hora"
+                                    :disabled="tipoCita != 1"
+                                >
+                                <!-- Errores... -->
+                                    @error('state.hora')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                            </div>
 
-                        <!-- Hora Fin (automática) -->
-                        <div class="col-12 col-md-4 mb-3 mb-md-0">
-                            <label for="horafin" class="form-label small mb-1">HORA FIN</label>
-                            <input 
-                                type="time" 
-                                id="horafin" 
-                                 
-                                class="form-control border py-2 w-100" 
-                                wire:model="state.horafin"
-                                readonly
-                            >
-                            @error('state.horafin')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- Hora Fin -->
+                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                <label for="horafin" class="form-label small mb-1">HORA FIN</label>
+                                <input 
+                                    type="time" 
+                                    id="horafin" 
+                                    class="form-control border py-2 w-100" 
+                                    wire:model="state.horafin"
+                                    readonly
+                                    :disabled="tipoCita != 1"
+                                >
+                                <!-- Errores... -->
+                            </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Campo Tipo de Cita (con select) -->
+            <div class="row mb-3 mb-md-4">
+                        <div class="col-12">
+                            <label for="tipocita-select" class="form-label small mb-1">TIPO DE CITA</label>
+                            <select 
+                                wire:model.live="state.tipocita" 
+                                id="tipocita-select" 
+                                class="form-select border py-2 w-100"
+                                x-on:change="
+                                    tipoCita = $event.target.value; 
+                                    selectedCitaText = $event.target.options[$event.target.selectedIndex].text
+                                "
+                            >
+                                <option value="1">CITA NORMAL    
+                                </option>
+                                <option value="2">CITA VACUNA ALERGOIDE</option>
+                                <option value="3">CITA VACUNA ACUOSA</option>
+                                <option value="4">CITA VACUNA ORAL</option>
+                            </select>
+                            @error('state.tipocita')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
             </div>
 
 
@@ -128,7 +178,7 @@
                     <textarea 
                         id="note" 
                         class="form-control border py-2 w-100" 
-                        rows="3" 
+                        rows="1" 
                         wire:model="state.note"
                     ></textarea>
                 </div>
@@ -137,18 +187,29 @@
             @error('state.datos')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
+
+
             
+                <!-- Texto "Mensaje de horario al ser vacunas" -->
+                <div x-show="showMensaje" class="alert alert-info mt-3">
+                  <i class="bi bi-calendar"></i>   Las citas de vacunas son por día.
+                </div>
+
+
+
+
+
             <div class="card-footer">
 
                  <div class="d-flex justify-content-between">
                     <button
                         wire:click="$dispatch('crear-cita')"
-                        class="btn btn-rose btn-sm btn-md@md btn-lg@lg w-100 w-md-auto btn-success"
+                        class="btn btn-success btn-sm btn-md@md btn-lg@lg w-100 w-md-auto"
                         title="Crear cita"
                         wire:loading.attr="disabled"
                     >
                     <i class="bi bi-plus"></i>
-                        CREAR CITAS
+                        CREAR <span x-text="selectedCitaText"></span>
                     </button>
 
 
@@ -162,6 +223,7 @@
                         </button>
                  </div>
             </div>
+              
         </form>
     </div>
 </div>

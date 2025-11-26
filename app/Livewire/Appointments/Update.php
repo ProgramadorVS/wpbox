@@ -25,6 +25,7 @@ class Update extends Component
     public $note;
     public $contact_id;
     public $doctor_id;
+    public $tipocita;
     public $appointmentId;
     public $contactSearch = '';
     public $contactResults = [];
@@ -116,6 +117,7 @@ public function setDoctorIdUpdate($doctor_id)
         $this->note = $appointment->note;
         $this->contact_id = $appointment->contact_id;
         $this->doctor_id = $appointment->doctor_id;
+        $this->tipocita = $appointment->tipocita;
         $contact = Contact::find($appointment->contact_id);
         $this->contactSearch = $contact ? $contact->name : '';
     }
@@ -123,7 +125,50 @@ public function setDoctorIdUpdate($doctor_id)
 
  
 
- 
+ public function updatedTipocita($value)
+{
+    // Si es cita normal (1), generalmente no sobrescribimos la hora automáticamente
+    // a menos que quieras limpiar los campos. Aquí asumimos que no hace nada.
+    if ($value == 1) {
+        return;
+    }
+
+    // Configuración de horas base
+    $baseHours = [
+        2 => '14:00', // Alergoide
+        3 => '15:00', // Acuosa
+        4 => '16:00', // Oral
+    ];
+
+    if (isset($baseHours[$value])) {
+        // Validar que tengamos fecha
+        if (empty($this->fecha)) {
+            $this->dispatch('notify', type: 'warning', message: 'Seleccione una fecha primero');
+            return;
+        }
+
+        // 1. Contar citas de este tipo en esa fecha, EXCLUYENDO la cita actual
+        // (importante para que al editar no se cuente a sí misma y desplace el horario)
+        $count = Appointment::whereDate('fecha', $this->fecha)
+                    ->where('tipocita', $value)
+                    ->where('id', '!=', $this->appointmentId) 
+                    ->count();
+
+        // 2. Cálculo Cíclico (Módulo 3)
+        $slotIndex = $count % 3; 
+        $minutesToAdd = $slotIndex * 20;
+
+        // 3. Calcular Hora
+        $horaBase = \Carbon\Carbon::createFromFormat('H:i', $baseHours[$value]);
+        
+        $nuevaHoraInicio = $horaBase->copy()->addMinutes($minutesToAdd);
+        $nuevaHoraFin = $nuevaHoraInicio->copy()->addMinutes(20);
+
+        // 4. Asignar a las propiedades públicas
+        $this->hora = $nuevaHoraInicio->format('H:i');
+        $this->horafin = $nuevaHoraFin->format('H:i');
+    }
+}
 
 
     public function selectContact($contactId)
@@ -167,6 +212,7 @@ public function update()
         'hora' => 'required',
         'horafin' => 'nullable',
         'status_id' => 'required|in:1,2,3',
+        'tipocita' => 'required|integer',  
         'note' => 'nullable',
         'contact_id' => 'required|exists:contacts,id',
         'doctor_id' => 'required|exists:doctores,id',
@@ -327,26 +373,53 @@ public function updatedHora($value)
     {           
       try {
 
-            // AQUI PARA AGREGAR EL MENSAJE DE AGENDADO      
-            // validacion de que existan las plantillas y campañas automaricas
-            if (Campaign::hasCitaCancela()) {
-                $campaña_id  = Campaign::getCitaCancelaIdSafe();
-                // Proceder con la lógica
-            } else {
-                // No hay campaña configurada
-                $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
-                $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de CANCELACIÓN de Agenda');
-                return;
-            }
+        // 1. Obtener el tipo de cita actual desde la DB
+                $tipocita = Appointment::where('id', $id)->value('tipocita');
+                
+                $campaña_id = null;
+                $mensajeError = '';
+
+
+        if ($tipocita == 1) {
+             // --- CITA NORMAL ---
+                    // AQUI PARA AGREGAR EL MENSAJE DE AGENDADO      
+                    // validacion de que existan las plantillas y campañas automaricas
+                    if (Campaign::hasCitaCancela()) {
+                        $campaña_id  = Campaign::getCitaCancelaIdSafe();
+                        // Proceder con la lógica
+                    } else {
+                         $mensajeError = 'No existe plantilla.- Configure una campaña para mensajes de CANCELACIÓN de Agenda (Normal)';
+                    }
+        }
+        else
+            {
+
+            // --- CITA VACUNA (tipocita > 1) ---
+                        // Usamos los métodos específicos para vacuna
+                        if (Campaign::hasCitaCancelaVacuna()) {
+                            $campaña_id = Campaign::getCitaCancelaVacunaIdSafe();
+                        } else {
+                            $mensajeError = 'No existe plantilla.- Configure una campaña para mensajes de CANCELACIÓN de Vacuna';
+                        }
+
+        }
        
        // manda a llamar a la funcion desde un TRAIT que es como un modulo generico para tener funciones esta en 
        //app/Traits/AppointmentMessageTrait.php
         // este mensaje se manda en automatico sin cron ni nada
-      
-        $this->AgregarMensaje($id, $campaña_id, 3); // ES CANCELACION
-
- 
-       
+        
+                // 3. Ejecución o Error
+                    if ($campaña_id) {
+                        // Si tenemos campaña, mandamos el mensaje
+                        // El parámetro '3' indica que es tipo cancelación
+                        $this->AgregarMensaje($id, $campaña_id, 3); 
+                    } else {
+                        // Si no se encontró campaña, mostramos el error específico definido arriba
+                        $this->dispatch('cita-creada'); // Cierra el modal
+                        $this->dispatch('notify', type: 'error', message: $mensajeError);
+                        return;
+                    }
+                
         
     } catch (\Exception $e) {
         $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL

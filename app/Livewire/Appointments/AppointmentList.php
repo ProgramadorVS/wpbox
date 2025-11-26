@@ -20,10 +20,11 @@ class AppointmentList extends Component
     public $doctor_id = null;
     public $asiste = null;
     public $fecha = null;
+    public $tipocita = null; // Nueva propiedad para el filtro
     public $fecha_fin = null;
     public $contact_name = ''; // Nuevo campo para búsqueda por nombre
 
-    protected $queryString = ['status_id', 'doctor_id', 'fecha', 'contact_name','asiste'];  // Agregamos los nuevos parámetros
+    protected $queryString = ['status_id', 'doctor_id', 'fecha', 'contact_name','asiste', 'tipocita'];  // Agregamos los nuevos parámetros
 
   
     public function getEstadoAgenda($whatscita_agenda)
@@ -62,6 +63,18 @@ class AppointmentList extends Component
         return $estados[$whatscita_confirma] ?? ['label' => 'Desconocido', 'class' => 'badge bg-secondary'];
     }
 
+    public function getTipoCitaLabel($tipocita)
+    {
+        $tipos = [
+            1 => 'CITA',
+            2 => 'ALERGOIDE',
+            3 => 'ACUOSA',
+            4 => 'ORAL',
+        ];
+
+        return $tipos[$tipocita] ?? 'N/A';
+    }
+
 
     public function mount()
     {
@@ -84,7 +97,7 @@ class AppointmentList extends Component
 
     public function updated($property)
     {
-        if (in_array($property, ['status_id', 'doctor_id', 'fecha','fecha_fin', 'contact_name','asiste'])) {
+        if (in_array($property, ['status_id', 'doctor_id', 'fecha','fecha_fin', 'contact_name','asiste', 'tipocita'])) {
             $this->resetPage();
         }
     }
@@ -92,7 +105,7 @@ class AppointmentList extends Component
  
      public function clearFilters()
     {
-        $this->reset(['status_id', 'doctor_id', 'fecha', 'fecha_fin','contact_name','asiste']);
+        $this->reset(['status_id', 'doctor_id', 'fecha', 'fecha_fin','contact_name','asiste', 'tipocita']);
         $this->resetPage();
     }
 
@@ -120,6 +133,9 @@ class AppointmentList extends Component
             })
             ->when(is_numeric($this->asiste), function ($query) {
                 return $query->where('asiste', $this->asiste);
+            })
+            ->when($this->tipocita, function ($query, $tipocita) {
+                return $query->where('tipocita', $tipocita);
             })
             ->orderBy('fecha', 'asc')
             ->orderBy('hora', 'asc');

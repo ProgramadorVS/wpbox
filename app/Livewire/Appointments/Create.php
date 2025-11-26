@@ -17,6 +17,8 @@ use App\Traits\AppointmentMessageTrait;
 class Create extends Component
 {
     use AppointmentMessageTrait;
+ 
+
 
  public $companyLabels = [];
        public $state = [
@@ -26,7 +28,8 @@ class Create extends Component
         'hora' => '',
         'horafin' => '',
         'note' => '',
-        'status_id' => 1 // Valor por defecto
+        'status_id' => 1, // Valor por defecto para 'Agendada'
+        'tipocita' => 1 // Valor por defecto para 'CITA'
     ];
 
     public $doctor_id = null;
@@ -42,12 +45,27 @@ class Create extends Component
 #[On('setSlotDateTime')]
 public function setSlotDateTime($fecha = null, $hora = null)
 {
+     
+ 
     $this->state['fecha'] = $fecha;
     $this->state['hora']  = $hora;
 
-    $horaInicio = \Carbon\Carbon::createFromFormat('H:i', $hora);
-    $this->state['horafin'] = $horaInicio->copy()->addMinutes(20)->format('H:i');
+    // $horaInicio = \Carbon\Carbon::createFromFormat('H:i', $hora);
+    // $this->state['horafin'] = $horaInicio->copy()->addMinutes(20)->format('H:i');
+        if ($hora) {
+                $carbonHora = \Carbon\Carbon::createFromFormat('H:i', $hora);
 
+                // 1. Calcular hora fin (+20 min)
+                $this->state['horafin'] = $carbonHora->copy()->addMinutes(20)->format('H:i');
+
+                // 2. Asignar tipo de cita basado en la hora (0-23)
+                $this->state['tipocita'] = match ($carbonHora->hour) {
+                    14 => 2, // 14:00 - 14:59 -> Alergoide
+                    15 => 3, // 15:00 - 15:59 -> Acuosa
+                    16 => 4, // 16:00 - 16:59 -> Oral
+                    default => 1, // Cualquier otra hora -> Normal
+                };
+            }
 }
 
 
@@ -83,6 +101,7 @@ public function resetForm()
 {
     $this->state['contact_id'] = '';
     $this->state['note'] = '';
+   // $this->state['tipocita'] = 1; // Resetear a su valor por defecto YA NO SE USA PORQUE SE PUSO AL CLIC DEL CALENDARIO ALGO MAS RAPIDO
     $this->state['status_id'] = 1; // Valor por defecto
 
     $this->contactSearch = '';
@@ -91,6 +110,9 @@ public function resetForm()
     $this->selectedContact = null;
     $this->resetErrorBag();
     $this->clearValidation();
+
+    // Emitir un evento para actualizar el texto del botón
+   // $this->dispatch('updateButtonText', ['text' => 'CREAR CITA NORMAL']);// Resetear a su valor por defecto YA NO SE USA PORQUE SE PUSO AL CLIC DEL CALENDARIO ALGO MAS RAPIDO
 }
 
 
@@ -113,6 +135,7 @@ public function updatedStateHora($value)
 public function mount($fecha = null, $hora = null)
 {
     $this->state['doctor_id'] = Doctor::first()->id ?? null;
+    $this->state['tipocita'] = 1;
 
     if ($fecha) $this->state['fecha'] = $fecha;
     if ($hora) $this->state['hora'] = $hora;
@@ -175,6 +198,9 @@ public function selectContact($contactId)
         $this->contactSearch = '';
     }
 
+
+
+
 #[On('crear-cita')]
     public function create()
     {
@@ -185,9 +211,11 @@ public function selectContact($contactId)
             'doctor_id' => 'required',
             'contact_id' => 'required|exists:contacts,id',
             'fecha' => 'required|date',
+            'tipocita' => 'required|in:1,2,3,4',
             'hora' => 'required',
             'horafin' => 'required',
             'note' => 'nullable',
+
         ], [
             // Mensajes personalizados
             'doctor_id.required' => 'El campo Doctor es obligatorio.',
@@ -197,6 +225,7 @@ public function selectContact($contactId)
             'fecha.date' => 'La fecha debe tener un formato válido.',
             'hora.required' => 'El campo Hora de inicio es obligatorio.',
             'horafin.required' => 'El campo Hora de fin es obligatorio.',
+            'tipocita.required' => 'Debe seleccionar un tipo de cita.',
         ]);
 
 
@@ -208,24 +237,107 @@ public function selectContact($contactId)
             }
 
 
-        // if ($validator->fails()) {
-        //      $this->addError('state.datos', 'Por favor complete todos los campos requeridos..');
-        //    // sale abajo ya no sirve $this->dispatch('notify', type: 'error', message: 'Por favor complete todos los campos requeridos.');
-        //     return;
-        // }
+// switch ($this->state['tipocita']) {
+    
+//     case 2: // ALERGOIDE
+//         $this->state['hora'] = '14:00';
+//         $this->state['horafin'] = '14:20';
+//         break;
+//     case 3: // ACUOSA
+//         $this->state['hora'] = '15:00';
+//         $this->state['horafin'] = '15:20';
+//         break;
+//     case 4: // ORAL
+//         $this->state['hora'] = '16:00';
+//         $this->state['horafin'] = '16:20';
+//         break;
+//     default:
+         
+//         break;
+// }
 
-        // Validar conflicto de citas
-        $exists = Appointment::where('doctor_id', $this->state['doctor_id'])
-            ->where('fecha', $this->state['fecha'])
-            ->where('hora', $this->state['hora'])
-            ->where('status_id', '<>', 3) // cancelado
-            ->exists();
+//PROCESO PARA PONER LAS VACUNAS EN EL HORARIO INDICADO CON EL CICLO DE 3 CITAS
+// 1. Definimos las horas base por tipo de cita en un array para evitar múltiples 'case'
+$baseHours = [
+    2 => '14:00', // Alergoide
+    3 => '15:00', // Acuosa
+    4 => '16:00', // Oral
+];
 
-        if ($exists) {
-                $this->addError('state.hora', 'Ya existe una cita agendada para este doctor a esa hora.');
-          // sale abajo ya no sirve       $this->dispatch('notify', type: 'error', message: 'Ya existe una cita agendada para este doctor a esa hora.');
-                return;
+// Solo procedemos si el tipo seleccionado está en nuestra configuración (ignora tipo 1)
+if (isset($baseHours[$this->state['tipocita']])) {
+
+    // Validar que tengamos fecha antes de consultar
+    if (empty($this->state['fecha'])) {
+        // Opcional: Manejar error o asignar fecha hoy por defecto
+        return; 
+    }
+
+    // 2. Contamos cuántas citas de ESTE tipo existen ya en ESA fecha
+    $count = Appointment::whereDate('fecha', $this->state['fecha'])
+                ->where('tipocita', $this->state['tipocita'])
+                ->count();
+
+    // 3. Lógica del Ciclo (Módulo 3)
+    // El operador % 3 hará esto:
+    // Si hay 0 citas: 0 % 3 = 0  -> Sumar 0 min
+    // Si hay 1 cita:  1 % 3 = 1  -> Sumar 20 min
+    // Si hay 2 citas: 2 % 3 = 2  -> Sumar 40 min
+    // Si hay 3 citas: 3 % 3 = 0  -> Sumar 0 min (Reinicia el ciclo)
+    $slotIndex = $count % 3; 
+    $minutesToAdd = $slotIndex * 20;
+
+    // 4. Calculamos la hora exacta
+    $horaBase = Carbon::createFromFormat('H:i', $baseHours[$this->state['tipocita']]);
+    
+    $horaInicio = $horaBase->copy()->addMinutes($minutesToAdd);
+    $horaFin = $horaInicio->copy()->addMinutes(20);
+
+    // 5. Asignamos al estado
+    $this->state['hora'] = $horaInicio->format('H:i');
+    $this->state['horafin'] = $horaFin->format('H:i');
+}
+
+
+
+
+
+
+ // si la cita es de tipo vacuna se asigna hora fija y no se valida duplicidad
+      if ($this->state['tipocita'] > 1) {
+
+                    // Validar conflicto de citas solo de la MISMA
+                $exists = Appointment::where('doctor_id', $this->state['doctor_id'])
+                    ->where('fecha', $this->state['fecha'])
+                     
+                    ->where('contact_id', $this->state['contact_id'])
+                    ->where('tipocita', $this->state['tipocita'])   
+                    ->exists();
+
+                if ($exists) {
+                       
+                         // se sale si encuentra un duplicado ( por si  se manda 2 veces el codigo)
+                        return;
+                }
+
+        }// si la cita es normal si se valida duplicidad
+        else {
+                // Validar conflicto de citas
+                $exists = Appointment::where('doctor_id', $this->state['doctor_id'])
+                    ->where('fecha', $this->state['fecha'])
+                    ->where('hora', $this->state['hora'])
+                    ->where('status_id', '<>', 3) // cancelado
+                    ->exists();
+
+                if ($exists) {
+                        $this->addError('state.hora', 'Ya existe una cita agendada para este doctor a esa hora.');
+                // sale abajo ya no sirve       $this->dispatch('notify', type: 'error', message: 'Ya existe una cita agendada para este doctor a esa hora.');
+                        return;
+                }
         }
+
+
+
 
         Appointment::create($this->state);
 
@@ -244,6 +356,9 @@ public function selectContact($contactId)
     }
 
 
+
+
+
 public function render()
 {
     $data = [
@@ -256,38 +371,71 @@ public function render()
 
 
 // PARA MANDAR MENSAJE
-//dando clic en el boton de whats
+//dando clic en el boton de whats, pasando el id de la cita
 // FUNCION QUE SE MANDA DESDE LA VISTA PARA MANDAR MENSAJE ( SE AGREGA EN LA TABLA )
     #[On('mandar-whats')]
     public function mandarWhats($id)
-    {           
+    {       
+        
+        // OBTENGO EL tipocita de LA CITA donde 
+        //1 es normal y lo demas es vacuna
+        // entonces si es normal checo si existe la plantilla con hasCitaAgenda
+        // si es vacuna checo si existe la plantilla con hasCitaVacuna
+
+         $tipocita = Appointment::where('id', $id)->value('tipocita');
+
       try {
+        if ($tipocita == 1) {
+                    // AQUI PARA AGREGAR EL MENSAJE DE AGENDADO      
+                    // validacion de que existan las plantillas y campañas automaricas
+                    if (Campaign::hasCitaAgenda()) {
+                        $campaña_id  = Campaign::getCitaAgendaIdSafe();
+                        // Proceder con la lógica
+                    } else {
+                        // No hay campaña configurada
+                        $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
+                        $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Aviso de Agenda');
+                        return;
+                    }
 
-            // AQUI PARA AGREGAR EL MENSAJE DE AGENDADO      
-            // validacion de que existan las plantillas y campañas automaricas
-            if (Campaign::hasCitaAgenda()) {
-                $campaña_id  = Campaign::getCitaAgendaIdSafe();
-                // Proceder con la lógica
-            } else {
-                // No hay campaña configurada
-                $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
-                $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Aviso de Agenda');
-                return;
-            }
 
+                    
+                // aqui para agregar el RECORDATORIO
+                    if (Campaign::hasCitaRecuerda()) {
+                        $campaña_Recorda_id  = Campaign::getCitaRecuerdaIdSafe();
+                        // Proceder con la lógica
+                    } else {
+                        // No hay campaña configurada
+                        $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
+                        $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Recordatorio de Cita');
+                        return;
+                    }
+         }else{
 
+             if (Campaign::hasCitaVacuna()) {
+                        $campaña_id  = Campaign::getCitaAgendaVacunaIdSafe();
+                        // Proceder con la lógica
+                    } else {
+                        // No hay campaña configurada
+                        $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
+                        $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Aviso de Vacuna');
+                        return;
+                    }
 
-         // aqui para agregar el RECORDATORIO
-            if (Campaign::hasCitaRecuerda()) {
-                $campaña_Recorda_id  = Campaign::getCitaRecuerdaIdSafe();
-                // Proceder con la lógica
-            } else {
-                // No hay campaña configurada
-                $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
-                $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Recordatorio de Cita');
-                return;
-            }
-            // fin de la validación
+                    
+                // aqui para agregar el RECORDATORIO
+                    if (Campaign::hasCitaRecuerdaVacuna()) {
+                        $campaña_Recorda_id  = Campaign::getCitaAgendaVacunaIdSafe();
+                        // Proceder con la lógica
+                    } else {
+                        // No hay campaña configurada
+                        $this->dispatch('cita-creada'); // PARA CERRAR EL MODAL
+                        $this->dispatch('notify', type: 'error', message: 'No existe plantilla.- Configure una campaña para mensajes de Recordatorio de Cita');
+                        return;
+                    }
+         }
+
+    // fin de la validación
 
        
        // manda a llamar a la funcion desde un TRAIT que es como un modulo generico para tener funciones esta en 

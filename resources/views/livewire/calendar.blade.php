@@ -14,7 +14,6 @@
     <i class="fas fa-sync-alt"></i> Actualizar
 </button>
 
-<!-- Modal para detalles de cita -->
 
 
 <!-- Modal para detalles de cita -->
@@ -71,6 +70,16 @@
                     <div class="info-value" id="modalTime"></div>
                 </div>
                 
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="bi bi-prescription2"></i>
+                        Tipo de Cita:
+                    </div>
+                    <div class="info-value" id="modalTipoCitaText"></div>
+                </div>
+
+
                 <div class="info-row">
                     <div class="info-label">
                         <i class="bi bi-journal-text icon-notes"></i>
@@ -233,14 +242,29 @@
                     },
 
                     initialView: 'dayGridMonth',
+                    
+                    // AQUI LA LÓGICA: Si el tipo es > 1, agregamos la clase 'hide-time'
+                        eventClassNames: function(arg) {
+                            if (Number(arg.event.extendedProps.tipocita) > 1) {
+                                return [ 'hide-time' ];
+                            }
+                            return []; // Si es 1, no agregamos nada y se ve normal
+                        },
 
-                    displayEventTime: true,
+
+                  // displayEventTime: false,
+
+
                     eventTimeFormat: {
                         hour: '2-digit',
                         minute: '2-digit',
                         hour12: false
                     },
 
+
+
+
+                    
                     navLinks: true,
                     nowIndicator: true,
                     dayMaxEvents: true,
@@ -282,15 +306,43 @@
 
                     eventClick: function (info) {
                         var event = info.event;
-                        var start = event.start;
+                        var start =  event.start;
                         var end = event.end;
                         var idCita = Number(event.id);
+                        var tipocita = Number(event.extendedProps.tipocita);
                         var whatscita_agenda = Number(event.extendedProps.whatscita_agenda);
                         var whatscita_confirma = Number(event.extendedProps.whatscita_confirma);
                         var whatscita_cancela = Number(event.extendedProps.whatscita_cancela);
                         var whatscita_ok = Number(event.extendedProps.whatscita_ok);
                         var scheduledAt = event.extendedProps.scheduledAt;
 
+                        var tipoId = Number(event.extendedProps.tipocita);
+                        var tipoText = event.extendedProps.tipocitaText;
+                        var badgeColor = '';
+
+                            // 2. Definimos el color según tu lógica exacta
+                            switch (tipoId) {
+                                case 1: 
+                                    badgeColor = '#196cf3d9'; //  
+                                    break;
+                                case 2: 
+                                    badgeColor = '#8166b3ff'; //  
+                                    break;
+                                case 3: 
+                                    badgeColor = '#fb00cd70'; //  
+                                    break;
+                                case 4: 
+                                    badgeColor = '#4cbbb6b8'; // ORAL
+                                    break;
+                                default: 
+                                    badgeColor = '#fcfc04ff'; // Gris (Aplica para el tipo 1 si no se especifica otro)
+                                    break;
+                            }
+                          
+                        // 3. Construimos el HTML del Badge (asumiendo Bootstrap)
+                        // Usamos 'innerHTML' para que renderice la etiqueta <span>
+                        var badgeHtml = `<span class="badge rounded-pill" style="background-color: ${badgeColor}; color: #fff; font-size: 0.8em; padding: 8px 12px;">${tipoText}</span>`;
+  
                         const estadoAgenda = getEstadoAgendaJS(whatscita_agenda);
                         const estadoConfirma = getEstadoConfirmaJS(whatscita_confirma);
                         const estadoCancela = getEstadoAgendaJS(whatscita_cancela);
@@ -300,7 +352,14 @@
                         var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                         var dateFormatted = start.toLocaleDateString('es-ES', options);
 
-                        var timeFormatted = start.toLocaleTimeString('es-ES', {
+                        let timeFormatted;
+                        // Verificamos explícitamente la cadena 'NORMAL'
+                         
+                        if (tipocita !== 1) {
+                            timeFormatted = "TODO EL DIA";
+                        } else {
+
+                          timeFormatted = start.toLocaleTimeString('es-ES', {
                             hour: '2-digit',
                             minute: '2-digit'
                         });
@@ -311,6 +370,8 @@
                                 minute: '2-digit'
                             });
                         }
+                    }
+
 
                         var statusText = '';
                         var statusClass = '';
@@ -336,6 +397,14 @@
                         document.getElementById('modalPhone').textContent = event.extendedProps.contact_phone.substring(3);
                         document.getElementById('modalDate').textContent = dateFormatted;
                         document.getElementById('modalTime').textContent = timeFormatted;
+                        
+                        //document.getElementById('modalTipoCitaText').textContent = event.extendedProps.tipocitaText;
+                        // 4. Insertamos en el DOM
+                        document.getElementById('modalTipoCitaText').innerHTML = badgeHtml;
+                       
+                        
+                       // document.getElementById('modalTipoCita').textContent = event.extendedProps.tipocita;
+
                         document.getElementById('modalNotes').textContent = event.extendedProps.note || 'Sin notas';
                         document.getElementById('modalStatus').innerHTML =
                             '<span class="' + statusClass + '">' + statusText + '</span>';
@@ -624,11 +693,23 @@
 
                     slotLabelContent: function (arg) {
                         let hour = arg.date.getHours();
-                        if (hour >= 14 && hour < 17) {
-                            return {
-                                html: '<div class="divider">Descanso</div>'
-                            };
+
+                        switch (hour) {
+                            case 14: // Tipo 2
+                                return { 
+                                    html: '<div class="divider" style="color: #6f42c1; font-weight: bold; font-size: 0.8em;">ALERGOIDE</div>' 
+                                };
+                            case 15: // Tipo 3
+                                return { 
+                                    html: '<div class="divider" style="color: #fb00cd; font-weight: bold; font-size: 0.8em;">ACUOSA</div>' 
+                                };
+                            case 16: // Tipo 4
+                                return { 
+                                    html: '<div class="divider" style="color: #4cbbb6; font-weight: bold; font-size: 0.9em;">ORAL</div>' 
+                                };
                         }
+
+                        // Para el resto de horas, muestra la hora normal (ej: 10:00)
                         return {
                             html: arg.text
                         };
@@ -731,18 +812,97 @@
                             z-index: 10;
                         `;
 
+                        // addButton.onclick = function (e) {
+                        //     e.stopPropagation();
+                        //     e.preventDefault();
+                        //     // Formatea la fecha yyyy-mm-dd
+                        //     window.selectedSlotDate = slotDateTime.getFullYear() + '-' +
+                        //         String(slotDateTime.getMonth() + 1).padStart(2, '0') + '-' +
+                        //         String(slotDateTime.getDate()).padStart(2, '0');
+                        //     // Formatea la hora HH:mm
+                        //     window.selectedSlotTime = String(slotDateTime.getHours()).padStart(2, '0') + ':' +
+                        //         String(slotDateTime.getMinutes()).padStart(2, '0');
+                        //     Livewire.dispatch('setSlotDateTime', { fecha: window.selectedSlotDate, hora: window.selectedSlotTime });
+                        //     document.getElementById('createAppointmentModal').style.display = "block";
+                        // };
+                        
+                    // CODIGO OPTIMISTA MEJORADO PARA NO ESPERAR EL LAG DE LIVEWIRE
                         addButton.onclick = function (e) {
                             e.stopPropagation();
                             e.preventDefault();
-                            // Formatea la fecha yyyy-mm-dd
-                            window.selectedSlotDate = slotDateTime.getFullYear() + '-' +
-                                String(slotDateTime.getMonth() + 1).padStart(2, '0') + '-' +
-                                String(slotDateTime.getDate()).padStart(2, '0');
-                            // Formatea la hora HH:mm
-                            window.selectedSlotTime = String(slotDateTime.getHours()).padStart(2, '0') + ':' +
-                                String(slotDateTime.getMinutes()).padStart(2, '0');
-                            Livewire.dispatch('setSlotDateTime', { fecha: window.selectedSlotDate, hora: window.selectedSlotTime });
+
+                            // --- 1. PREPARACIÓN DE DATOS (JS PURO) ---
+                            
+                            // Formato Fecha YYYY-MM-DD
+                            let fYear = slotDateTime.getFullYear();
+                            let fMonth = String(slotDateTime.getMonth() + 1).padStart(2, '0');
+                            let fDay = String(slotDateTime.getDate()).padStart(2, '0');
+                            let fechaStr = `${fYear}-${fMonth}-${fDay}`;
+
+                            // Formato Hora Inicio HH:mm
+                            let hStart = String(slotDateTime.getHours()).padStart(2, '0');
+                            let mStart = String(slotDateTime.getMinutes()).padStart(2, '0');
+                            let horaStr = `${hStart}:${mStart}`;
+
+                            // Cálculo Hora Fin (+20 min)
+                            // Usamos timestamps para evitar errores de cambio de hora/día
+                            let endTimeObj = new Date(slotDateTime.getTime() + 20 * 60000); 
+                            let hEnd = String(endTimeObj.getHours()).padStart(2, '0');
+                            let mEnd = String(endTimeObj.getMinutes()).padStart(2, '0');
+                            let horaFinStr = `${hEnd}:${mEnd}`;
+
+                            // Cálculo Tipo de Cita (Lógica espejo del Backend)
+                            let hour = slotDateTime.getHours();
+                            let tipoCitaCalc = 1; // Default
+                            if (hour === 14) tipoCitaCalc = 2; // Alergoide
+                            if (hour === 15) tipoCitaCalc = 3; // Acuosa
+                            if (hour === 16) tipoCitaCalc = 4; // Oral
+
+
+                            // --- 2. ACTUALIZACIÓN VISUAL INMEDIATA (OPTIMISTIC UI) ---
+
+                            // A) Actualizar Inputs Directamente
+                            // Buscamos los inputs por ID (asegúrate de que tus inputs tengan estos IDs)
+                            let inputFecha = document.getElementById('fecha');
+                            let inputHora = document.getElementById('hora');
+                            let inputHoraFin = document.getElementById('horafin');
+                            let selectTipo = document.getElementById('tipocita-select');
+
+                            if (inputFecha) inputFecha.value = fechaStr;
+                            if (inputHora) inputHora.value = horaStr;
+                            if (inputHoraFin) inputHoraFin.value = horaFinStr;
+
+                            // B) Actualizar el Select y Disparar Reactividad de Alpine
+                            if (selectTipo) {
+                                selectTipo.value = tipoCitaCalc;
+                                // CRÍTICO: Disparar el evento 'change' manualmente hace que 
+                                // tu código Alpine (x-on:change="...") se ejecute al instante,
+                                // actualizando el texto del botón y los badges.
+                                selectTipo.dispatchEvent(new Event('change')); 
+                                selectTipo.dispatchEvent(new Event('input')); // Por seguridad para Livewire
+                            }
+                            
+                            // Disparar input events para otros campos si tienen lógica atada
+                            if (inputFecha) inputFecha.dispatchEvent(new Event('input'));
+
+
+                            // --- 3. SINCRONIZACIÓN Y APERTURA ---
+
+                            // Guardamos variables globales para tu lógica existente (opcional si ya no las usas abajo)
+                            window.selectedSlotDate = fechaStr;
+                            window.selectedSlotTime = horaStr;
+
+                            // Abrimos el modal INMEDIATAMENTE. 
+                            // Como ya inyectamos los valores en el DOM, el usuario ve la info correcta.
                             document.getElementById('createAppointmentModal').style.display = "block";
+
+                            // Enviamos los datos al backend para que el estado ($this->state) sea consistente.
+                            // Livewire procesará esto en segundo plano. Cuando responda, sobreescribirá
+                            // los valores, pero como son idénticos a los calculados, el usuario no notará nada.
+                            Livewire.dispatch('setSlotDateTime', { 
+                                fecha: fechaStr, 
+                                hora: horaStr 
+                            });
                         };
 
                         slot.style.position = 'relative';
@@ -948,7 +1108,7 @@
          // Al dar clic en  cerrar del editar Crear
         document.getElementById('closeEditarModal3').onclick = function() {
             document.getElementById('createAppointmentModal').style.display = "none";
-           
+            Livewire.dispatch('reset-form');
            
                                          
         };

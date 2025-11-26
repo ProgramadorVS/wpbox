@@ -7,7 +7,12 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-12">
-            <form wire:submit.prevent="update">
+            <form wire:submit.prevent="update"
+                    x-data="{ 
+                    tipoCita: @entangle('tipocita').live,
+                    // Mantén tus otras variables si las tienes
+                    selectedCitaText: '{{ $tipocita == 1 ? 'CITA NORMAL' : 'VACUNA...' }}' 
+                    }">
 
 
                 <!-- Campo DOCTOR -->
@@ -31,7 +36,28 @@
                     </div>
                 </div>
 
-
+            <!-- Campo Tipo de Cita (con select) -->
+            <div class="row mb-3 mb-md-4">
+                        <div class="col-12">
+                            <label for="tipocita-select" class="form-label small mb-1">TIPO DE CITA</label>
+                                <select 
+                                    wire:model.live="tipocita" 
+                                    id="tipocita-select" 
+                                    class="form-select border py-2 w-100"
+                                    x-model="tipoCita" 
+                                    x-on:change="selectedCitaText = $event.target.options[$event.target.selectedIndex].text"
+                                >
+                                <option value="1">CITA NORMAL    
+                                </option>
+                                <option value="2">CITA VACUNA ALERGOIDE</option>
+                                <option value="3">CITA VACUNA ACUOSA</option>
+                                <option value="4">CITA VACUNA ORAL</option>
+                            </select>
+                            @error('tipocita')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+            </div>
 
                 <!-- Campo Paciente -->
                 <div class="row mb-3 mb-md-4" x-data="{ open: false }" x-on:click.away="open = false">
@@ -91,8 +117,12 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
+
+
                             <!-- Hora Inicio -->
-                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+
+
+                            {{-- <div class="col-12 col-md-4 mb-3 mb-md-0">
                                 <label for="hora" class="form-label small mb-1">HORA INICIO</label>
                                 <input 
                                     type="time" 
@@ -104,9 +134,27 @@
                                 @error('hora')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
+
+
+                                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                    <label for="hora" class="form-label small mb-1">HORA INICIO</label>
+                                    <input 
+                                        type="time" 
+                                        id="hora" 
+                                        class="form-control border py-2 w-100" 
+                                        wire:model="hora"
+                                        :disabled="tipoCita != 1" 
+                                        :class="{ 'bg-light': tipoCita != 1 }"
+                                    >
+                                    <!-- Agregué bg-light para dar feedback visual extra de que está bloqueado -->
+                                    @error('hora') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                </div>
+
                             <!-- Hora Fin (automática) -->
-                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+
+
+                            {{-- <div class="col-12 col-md-4 mb-3 mb-md-0">
                                 <label for="horafin" class="form-label small mb-1">HORA FIN</label>
                                 <input 
                                     type="time" 
@@ -119,10 +167,32 @@
                                 @error('horafin')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
+                            </div> --}}
+
+                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                <label for="horafin" class="form-label small mb-1">HORA FIN</label>
+                                <input 
+                                    type="time" 
+                                    id="horafin" 
+                                    class="form-control border py-2 w-100" 
+                                    wire:model="horafin"
+                                    readonly 
+                                    :disabled="tipoCita != 1"
+                                    :class="{ 'bg-light': tipoCita != 1 }"
+                                >
+                                @error('horafin') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
+
+
+
                         </div>
                     </div>
                 </div>
+
+
+
+
+
 
                 <!-- Campo Estado -->
                 <div class="row mb-3 mb-md-4">
@@ -150,7 +220,7 @@
                         <textarea 
                             id="note" 
                             class="form-control border py-2 w-100" 
-                            rows="3" 
+                            rows="1" 
                             wire:model="note"
                             
                         ></textarea>

@@ -78,6 +78,13 @@ public static function hasCitaCancela()
 }
 
 
+public static function hasCitaCancelaVacuna()
+{
+    return static::where('cita_cancela_vacuna', 1)->exists();
+}
+
+
+
 public static function hasCitaOk()
 {
     return static::where('cita_ok', 1)->exists();
@@ -90,6 +97,13 @@ public static function hasCitaAgenda()
     return static::where('cita_agenda', 1)->exists();
 }
 
+
+public static function hasCitaVacuna()
+{
+    return static::where('cita_agenda_vacuna', 1)->exists();
+}
+
+
 /**
  * Verifica si existe una campaña con cita_recuerda activo
  * @return bool
@@ -99,6 +113,14 @@ public static function hasCitaRecuerda()
     return static::where('cita_recuerda', 1)->exists();
 }
 
+/**
+ * Verifica si existe una campaña con cita_recuerda activo
+ * @return bool
+ */
+public static function hasCitaRecuerdaVacuna()
+{
+    return static::where('cita_recuerda_vacuna', 1)->exists();
+}
 
 
 
@@ -110,6 +132,17 @@ public static function hasCitaRecuerda()
 public static function getCitaCancelaIdSafe()
 {
     $campaign = static::where('cita_cancela', 1)->first();
+    return $campaign ? $campaign->id : null;
+}
+
+
+/**
+ * Obtiene el ID de cita_agenda de forma segura (sin excepción)
+ * @return int|null
+ */
+public static function getCitaCancelaVacunaIdSafe()
+{
+    $campaign = static::where('cita_cancela_vacuna', 1)->first();
     return $campaign ? $campaign->id : null;
 }
 
@@ -136,6 +169,19 @@ public static function getCitaAgendaIdSafe()
     return $campaign ? $campaign->id : null;
 }
 
+
+
+/**
+ * Obtiene el ID de cita_agenda de forma segura (sin excepción)
+ * @return int|null
+ */
+public static function getCitaAgendaVacunaIdSafe()
+{
+    $campaign = static::where('cita_agenda_vacuna', 1)->first();
+    return $campaign ? $campaign->id : null;
+}
+
+
 /**
  * Obtiene el ID de cita_recuerda de forma segura (sin excepción)
  * @return int|null
@@ -146,6 +192,17 @@ public static function getCitaRecuerdaIdSafe()
     return $campaign ? $campaign->id : null;
 }
 
+
+
+/**
+ * Obtiene el ID de cita_recuerda de forma segura (sin excepción)
+ * @return int|null
+ */
+public static function getCitaRecuerdaVacunaIdSafe()
+{
+    $campaign = static::where('cita_recuerda_vacuna', 1)->first();
+    return $campaign ? $campaign->id : null;
+}
 
 
     public function shouldWeUseIt($receivedMessage,Contact $contact){
